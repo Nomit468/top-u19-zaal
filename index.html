@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TOP U19-1 Zaal</title>
+<meta name="description" content="Zaalstatistieken van TOP U19-1 uit Checkout: per wedstrijd, per vak, korf geraakt, schotafstand en per speler.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23eb6834'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: scorebord-kop, filterrij, kerncijfers, daarna van overzicht naar detail: wedstrijden → zaal vs veld → korf geraakt → vakken → afstand → spelers */
+:root {
+  --page: #f5f5f3;
+  --surface: #ffffff;
+  --ink: #141413;
+  --ink-2: #55534e;
+  --muted: #86837c;
+  --line: #e4e2dc;
+  --line-2: #cfccc4;
+  --wash: #f0efeb;
+  --top: #eb6834;
+  --top-2: #f6b495;
+  --top-2-ink: #5a2209;
+  --opp: #aeaba3;
+  --vak-mats: #2a78d6;
+  --vak-gido: #1baf7a;
+  --win: #006300; --loss: #b3261e;
+  --board: #222220; --board-ink: #ffffff; --board-ink-2: #b9b7af;
+  --font-ui: "Barlow Semi Condensed", "Arial Narrow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0f0f0e; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #8f8c85;
+    --line: #2c2c2a; --line-2: #45443f; --wash: #242422;
+    --top: #d95926; --top-2: #7a3a1c; --top-2-ink: #ffe3d6; --opp: #77746d;
+    --vak-mats: #3987e5; --vak-gido: #199e70;
+    --win: #2fb52f; --loss: #ef6b6b; --board: #000000;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0f0f0e; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7; --muted: #8f8c85;
+  --line: #2c2c2a; --line-2: #45443f; --wash: #242422;
+  --top: #d95926; --top-2: #7a3a1c; --top-2-ink: #ffe3d6; --opp: #77746d;
+  --vak-mats: #3987e5; --vak-gido: #199e70;
+  --win: #2fb52f; --loss: #ef6b6b; --board: #000000;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+.board { background: var(--board); color: var(--board-ink); padding-block: calc(22px + env(safe-area-inset-top, 0px)) 20px; }
+.board .wrap { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; }
+.board h1 { font-family: var(--font-num); font-weight: 700; font-size: clamp(32px, 6vw, 48px); line-height: 1; letter-spacing: .01em; }
+.board h1 span { color: var(--top); }
+.board .sub { color: var(--board-ink-2); font-size: 14px; margin-top: 6px; }
+.clock { display: inline-block; font-family: var(--font-num); font-weight: 700; background: #000; color: #ff5a2b; border: 1px solid #3a3a37; border-radius: 4px; padding: 0 6px; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+.record { display: flex; flex-wrap: wrap; gap: 12px 22px; }
+.record div { display: flex; flex-direction: column; align-items: flex-end; }
+.record b { font-family: var(--font-num); font-size: 40px; line-height: 1; font-weight: 700; white-space: nowrap; }
+.record span { color: var(--board-ink-2); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+
+.filters { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--page); border-bottom: 1px solid var(--line); padding-block: 10px; }
+.filters .wrap { display: flex; gap: 8px; align-items: center; overflow-x: auto; scrollbar-width: none; }
+.filters .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 4px; flex: none; }
+.chip { flex: none; font: inherit; font-size: 14px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; display: inline-flex; gap: 6px; align-items: baseline; }
+.chip:hover { border-color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.chip .sc { font-family: var(--font-num); font-weight: 600; font-variant-numeric: tabular-nums; }
+.chip .wl { font-size: 11px; font-weight: 700; }
+.chip:focus-visible, th button:focus-visible, .bar:focus-visible { outline: 2px solid var(--top); outline-offset: 2px; }
+
+main { padding-block: 24px 48px; display: flex; flex-direction: column; gap: 36px; }
+section > header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 14px; }
+h2 { font-size: 22px; font-weight: 700; }
+.hint { color: var(--muted); font-size: 13px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.tile .t { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-2); }
+.tile .v { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.tile .v b { font-family: var(--font-num); font-size: 34px; line-height: 1; font-weight: 700; }
+.tile .v small { color: var(--ink-2); font-size: 14px; }
+.tile .f { font-size: 13px; color: var(--muted); }
+.tile .f.good { color: var(--win); } .tile .f.bad { color: var(--loss); }
+
+.notes { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; }
+.notes h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 80ch; }
+.notes li::marker { color: var(--top); }
+.notes .caveat { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; min-width: 0; }
+.panel h3 { font-size: 16px; font-weight: 600; }
+.panel .cap { color: var(--muted); font-size: 13px; margin: 2px 0 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--ink-2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.gchart { position: relative; height: 190px; margin: 14px 0 0 30px; }
+.gchart .gl { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); }
+.gchart .gl span { position: absolute; left: -30px; top: -8px; width: 24px; text-align: right; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.gchart .gl.base { border-top-color: var(--line-2); }
+.gchart .groups { position: absolute; inset: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; }
+.grp { display: flex; justify-content: center; align-items: flex-end; gap: 2px; height: 100%; transition: opacity .15s; }
+.grp.dim { opacity: .35; }
+.bar { width: min(34px, 30%); border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
+.bar.top { background: var(--top); } .bar.opp { background: var(--opp); }
+.bar .bl { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--ink-2); padding-bottom: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.xl { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; margin-left: 30px; margin-top: 6px; }
+.xl div { text-align: center; font-size: 12px; color: var(--ink-2); line-height: 1.2; }
+.xl div small { display: block; color: var(--muted); font-size: 11px; }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+caption { caption-side: bottom; text-align: left; padding: 8px 10px; color: var(--muted); font-size: 12px; }
+th, td { padding: 8px 10px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-2); font-weight: 600; background: var(--wash); }
+th:first-child, td:first-child { text-align: left; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.sel td { background: color-mix(in srgb, var(--top) 10%, transparent); }
+td .m { color: var(--muted); font-size: 12px; margin-left: 4px; }
+.res { font-weight: 700; font-size: 12px; padding: 1px 7px; border-radius: 4px; border: 1px solid currentColor; }
+.res.w { color: var(--win); } .res.l { color: var(--loss); } .res.d { color: var(--ink-2); }
+.delta { font-size: 12px; margin-left: 6px; }
+
+/* Zaal tegenover veld */
+#cmp td:nth-child(2) { color: var(--ink-2); }
+#cmp td:nth-child(3) { font-weight: 700; }
+#cmp td:first-child { white-space: normal; min-width: 180px; }
+#cmp td:first-child small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+
+/* Korf geraakt */
+.kg { display: grid; gap: 10px; }
+.kgrow { display: grid; grid-template-columns: 150px 1fr 70px; gap: 12px; align-items: center; }
+.kgrow .kn { font-size: 14px; line-height: 1.2; }
+.kgrow .kn small { display: block; color: var(--muted); font-size: 12px; }
+.kgrow .kn i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+.stack { display: flex; height: 26px; gap: 2px; }
+.stack div { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; min-width: 0; }
+.stack div:first-child { border-radius: 4px 0 0 4px; } .stack div:last-child { border-radius: 0 4px 4px 0; }
+.stack .g { background: var(--top); color: #fff; } .stack .k { background: var(--top-2); color: var(--top-2-ink); } .stack .x { background: var(--wash); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line-2); }
+.kgrow .kv2 { text-align: right; font-family: var(--font-num); font-size: 20px; font-weight: 700; }
+.kgrow .kv2 small { display: block; font-family: var(--font-ui); font-size: 11px; color: var(--muted); font-weight: 400; }
+.kgrow.ref { padding-top: 10px; border-top: 1px dashed var(--line-2); }
+.kgrow.ref .kn { color: var(--ink-2); }
+.kgrow.dim { opacity: .35; }
+
+/* Vakken */
+.vak { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.vak .vh { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.vak h3 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
+.vak h3 i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.vak .who { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.saldo { text-align: right; }
+.saldo b { font-family: var(--font-num); font-size: 38px; line-height: 1; font-weight: 700; }
+.saldo span { display: block; font-size: 13px; color: var(--ink-2); }
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 16px; }
+.kv div { display: flex; flex-direction: column; border-top: 1px solid var(--line); padding-top: 6px; }
+.kv span { font-size: 12px; color: var(--ink-2); }
+.kv b { font-family: var(--font-num); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kv b small { font-family: var(--font-ui); font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+.strip { display: flex; gap: 6px; flex-wrap: wrap; }
+.strip div { flex: 1 1 0; min-width: 64px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; text-align: center; transition: opacity .15s; }
+.strip div.dim { opacity: .35; }
+.strip b { font-family: var(--font-num); font-size: 20px; display: block; line-height: 1.1; }
+.strip small { font-size: 11px; color: var(--muted); display: block; }
+.pos { color: var(--win); } .neg { color: var(--loss); } .zero { color: var(--ink-2); }
+
+/* Schotafstand */
+.dist { display: grid; gap: 12px; }
+.drow { display: grid; grid-template-columns: 84px 1fr 54px 64px; align-items: center; gap: 12px; }
+.drow .dn { font-weight: 600; }
+.drow .dn small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+.track { height: 22px; background: var(--wash); border-radius: 0 4px 4px 0; position: relative; }
+.fill { position: absolute; inset: 0 auto 0 0; background: var(--top); border-radius: 0 4px 4px 0; min-width: 2px; }
+.drow.sp .fill { background: var(--opp); }
+.vmark { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); border-radius: 1px; }
+.vmark span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--ink-2); white-space: nowrap; padding-top: 1px; }
+.drow .pv { font-family: var(--font-num); font-size: 22px; font-weight: 700; text-align: right; }
+.drow .gv { color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+.ticks { display: grid; grid-template-columns: 84px 1fr 54px 64px; gap: 12px; font-size: 11px; color: var(--muted); }
+.ticks div:nth-child(2) { display: flex; justify-content: space-between; }
+.dsep { border-top: 1px dashed var(--line-2); margin: 6px 0 2px; }
+.shares { display: grid; gap: 8px; margin-top: 8px; }
+.srow { display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: center; font-size: 13px; color: var(--ink-2); }
+.share { display: flex; height: 26px; gap: 2px; }
+.share div { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; overflow: hidden; white-space: nowrap; min-width: 0; }
+.share div:first-child { border-radius: 4px 0 0 4px; } .share div:last-child { border-radius: 0 4px 4px 0; }
+.share .s3 { background: var(--top); color: #fff; } .share .s6 { background: var(--top-2); color: var(--top-2-ink); } .share .s9 { background: var(--wash); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line-2); }
+
+/* Spelers */
+#ptable th button { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
+#ptable th button::after { content: "↕"; opacity: .35; font-size: 11px; }
+#ptable th[aria-sort] button::after { content: "↓"; opacity: 1; }
+#ptable th[aria-sort="ascending"] button::after { content: "↑"; }
+#ptable td:first-child, #ptable th:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
+#ptable th:first-child { background: var(--wash); }
+.pname { font-weight: 600; }
+.vdot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 3px; }
+.small { color: var(--muted); }
+.mini { display: inline-block; width: 44px; height: 6px; background: var(--wash); border-radius: 3px; margin-left: 8px; vertical-align: 1px; position: relative; overflow: hidden; }
+.mini i { position: absolute; inset: 0 auto 0 0; background: var(--top); border-radius: 3px; }
+.small .mini i { background: var(--opp); }
+td.na { color: var(--line-2); }
+
+#tip { position: fixed; pointer-events: none; z-index: 20; background: var(--ink); color: var(--surface); font-size: 13px; padding: 8px 10px; border-radius: 6px; line-height: 1.35; max-width: 260px; box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
+
+@media (max-width: 560px) {
+  .drow, .ticks { grid-template-columns: 64px 1fr 44px 52px; gap: 8px; }
+  .srow { grid-template-columns: 64px 1fr; gap: 8px; }
+  .kgrow { grid-template-columns: 1fr 64px; }
+  .kgrow .stack { grid-column: 1 / -1; grid-row: 2; }
+  .record b { font-size: 28px; }
+  .record { gap: 10px 18px; }
+  .record div { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="board">
+  <div class="wrap">
+    <div>
+      <h1>TOP U19-1 <span>Zaal</span></h1>
+      <div class="sub">Met schotklok <span class="clock">25</span> · statistieken uit Checkout · <span id="nMatches"></span></div>
+    </div>
+    <div class="record" id="record"></div>
+  </div>
+</div>
+
+<div class="filters">
+  <div class="wrap" id="filters" role="group" aria-label="Kies wedstrijd">
+    <span class="lbl">Toon</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section class="notes" id="kern">
+    <h3>Eerste indruk van de zaal</h3>
+    <ul>
+      <li><b>Het tempo ligt hoger.</b> Gemiddeld 77 aanvallen per wedstrijd, tegen 59 op het veld. De schotklok doet wat hij moet doen.</li>
+      <li><b>Meer schoten raken de korf.</b> 71% van de veldschoten raakt de korf, tegen 64% op het veld. Het aandeel dat helemaal mis gaat, daalde van 36% naar 29%. Dat telt in de zaal dubbel, want alleen een schot dat de korf raakt geeft een nieuwe schotklok.</li>
+      <li><b>Nog meer van afstand, maar die gaan er beter in.</b> 63% van de veldschoten komt van 9 meter (veld 53%). Van 9 meter scoort TOP nu 18%, op het veld was dat 10%.</li>
+      <li><b>Tegen PKC ging de reboundstrijd weer verloren.</b> PKC pakte 60% van de eigen rebounds en schoot 123 keer, TOP 87 keer. Het patroon van GG op het veld keert terug.</li>
+    </ul>
+    <p class="caveat">Dit zijn twee wedstrijden. Lees het als eerste indruk, niet als conclusie.</p>
+  </section>
+
+  <section id="wedstrijden">
+    <header>
+      <h2>Per wedstrijd</h2>
+      <div class="legend"><span><i style="background:var(--top)"></i>TOP</span><span><i style="background:var(--opp)"></i>Tegenstander</span></div>
+    </header>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Goals per aanval</h3>
+        <p class="cap">Welk deel van de aanvallen eindigt in een doelpunt</p>
+        <div id="chartAtt"></div>
+      </div>
+      <div class="panel">
+        <h3>Balverlies</h3>
+        <p class="cap">Welk deel van de aanvallen eindigt in balverlies. Lager is beter.</p>
+        <div id="chartBv"></div>
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-top:16px">
+      <table id="mtable" aria-label="Cijfers per wedstrijd"></table>
+    </div>
+  </section>
+
+  <section id="vergelijk">
+    <header>
+      <h2>Zaal tegenover veld</h2>
+      <span class="hint">Veld = de vijf veldwedstrijden van dit najaar</span>
+    </header>
+    <div class="tbl-wrap">
+      <table id="cmp" aria-label="Zaal tegenover veld"></table>
+    </div>
+  </section>
+
+  <section id="korf">
+    <header>
+      <h2>Raakt het schot de korf?</h2>
+      <div class="legend"><span><i style="background:var(--top)"></i>Goal</span><span><i style="background:var(--top-2)"></i>Korf geraakt</span><span><i style="background:var(--wash);box-shadow:inset 0 0 0 1px var(--line-2)"></i>Mis</span></div>
+    </header>
+    <div class="panel">
+      <p class="cap" style="margin-top:0">Met schotklok is "mis" het dure schot: het reset de klok niet. Rechts het deel dat de korf raakte, goals meegeteld.</p>
+      <div class="kg" id="kg"></div>
+    </div>
+  </section>
+
+  <section id="vakken">
+    <header>
+      <h2>Vakken</h2>
+      <span class="hint">Doelsaldo = goals van het vak in de aanval min goals tegen in de verdediging</span>
+    </header>
+    <div class="grid2" id="vakcards"></div>
+  </section>
+
+  <section id="afstand">
+    <header>
+      <h2>Schotafstand</h2>
+      <span class="hint" id="distHint"></span>
+    </header>
+    <div class="panel">
+      <div class="dist" id="dist"></div>
+      <div style="margin-top:22px">
+        <h3 style="font-size:14px">Waar de veldschoten vandaan komen</h3>
+        <div class="shares" id="shares"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="spelers">
+    <header>
+      <h2>Spelers</h2>
+      <span class="hint">Veldschoten, zonder strafworpen en vrije worpen. Grijs = minder dan 10 schoten. Klik een kolom om te sorteren.</span>
+    </header>
+    <div class="tbl-wrap">
+      <table id="ptable" aria-label="Schoten per speler"></table>
+    </div>
+  </section>
+
+  <section class="notes">
+    <h3>Zo lees je dit</h3>
+    <ul>
+      <li>Alle cijfers komen uit Checkout en zijn per wedstrijd overgenomen. Checkout zelf toont geen totalen over meerdere wedstrijden; die zijn hier opgeteld.</li>
+      <li>Met schotklok moet de aanval binnen 25 seconden de korf raken. "Korf geraakt" betekent: het schot raakte de korf maar ging er niet in. Samen met de goals is dat het deel dat de schotklok opnieuw laat lopen.</li>
+      <li>Checkout registreert een verlopen schotklok niet apart. Die zit, net als slechte passes en overtredingen, in balverlies.</li>
+      <li>Veldschoten zijn schoten uit het spel. Checkout telt strafworpen en vrije worpen niet mee in de totalen per speler, daarom staan ze apart. Eén vrije worp tegen LDODK staat op "Onbekend".</li>
+      <li>Eén goal van Sofie tegen LDODK heeft in Checkout geen schotpositie. Die telt mee in het totaal van Sofie, maar niet bij de afstanden en niet bij korf geraakt.</li>
+      <li>In de zaal wisselen spelers vaker van vak. Vak Mats en Vak Gido zijn genoemd naar de vaste kern. Wie in beide vakken speelde, staat in de spelerstabel als "beide".</li>
+      <li>Schotafstanden en korf geraakt van tegenstanders worden niet geregistreerd, dus die vergelijking ontbreekt.</li>
+      <li>Percentages op minder dan 10 schoten zeggen weinig. Eén goal meer of minder verandert ze al sterk.</li>
+    </ul>
+  </section>
+</main>
+<footer class="wrap" id="foot"></footer>
+<div id="tip" hidden></div>
+
+<script>
+// Spelers: [3m g,a, 6m g,a, 9m g,a, zonder positie g,a, strafworp g,a, vrije worp g,a, rebound g,a]
+// gkm per vak: [goal, korf geraakt, mis] over schoten met positie
+const UPDATED = "6 november 2026";
+const MATCHES = [
+  { id: "ldodk", opp: "LDODK/Rinsma Modeplein", short: "LDODK", venue: "thuis", gf: 27, ga: 17,
+    top: { att: 79, goals: 27, shots: 105, bv: 13, rw: 40, rn: 78 },
+    tgn: { att: 79, goals: 17, shots: 109, bv: 12, rw: 42, rn: 92 },
+    vak: {
+      mats: { att: 41, goals: 14, shots: 60, bv: 5, rw: 24, rn: 46, oAtt: 39, oGoals: 9, oShots: 61, oBv: 4, gkm: [12, 28, 16] },
+      gido: { att: 38, goals: 13, shots: 45, bv: 8, rw: 16, rn: 32, oAtt: 40, oGoals: 8, oShots: 48, oBv: 8, gkm: [11, 25, 7] } },
+    players: [
+      ["Christian", "mats", [0,0, 0,1, 0,2,  0,0, 0,0, 0,0, 3,3]],
+      ["Floor",     "mats", [0,0, 0,2, 1,10, 0,0, 0,0, 0,0, 4,11]],
+      ["Juul",      "mats", [2,2, 0,1, 0,2,  0,0, 0,0, 0,0, 1,3]],
+      ["Loïs",      "mats", [0,0, 0,1, 0,2,  0,0, 0,0, 0,0, 3,3]],
+      ["Mats",      "mats", [1,2, 1,6, 5,18, 0,0, 0,0, 0,1, 8,19]],
+      ["Onbekend",  "mats", [0,0, 0,0, 0,0,  0,0, 0,0, 0,1, 0,0]],
+      ["Sofie",     "mats", [0,2, 1,1, 1,4,  1,1, 1,1, 0,0, 4,5]],
+      ["Floor",     "gido", [0,0, 0,3, 0,1,  0,0, 0,0, 1,1, 2,4]],
+      ["Gerben",    "gido", [0,0, 0,1, 1,1,  0,0, 0,0, 0,0, 1,1]],
+      ["Gido",      "gido", [0,0, 1,2, 1,11, 0,0, 1,1, 0,0, 6,11]],
+      ["Juul",      "gido", [1,2, 0,4, 1,4,  0,0, 0,0, 0,0, 3,8]],
+      ["Noah",      "gido", [0,1, 0,2, 3,6,  0,0, 0,0, 0,0, 2,6]],
+      ["Yana",      "gido", [2,2, 1,3, 0,0,  0,0, 0,0, 0,0, 2,2]] ] },
+  { id: "pkc", opp: "PKC/Vertom", short: "PKC", venue: "uit", gf: 14, ga: 18,
+    top: { att: 74, goals: 14, shots: 87, bv: 18, rw: 32, rn: 73 },
+    tgn: { att: 75, goals: 18, shots: 123, bv: 15, rw: 63, rn: 105 },
+    vak: {
+      mats: { att: 35, goals: 9, shots: 44, bv: 7, rw: 16, rn: 35, oAtt: 43, oGoals: 11, oShots: 80, oBv: 6, gkm: [8, 15, 17] },
+      gido: { att: 39, goals: 5, shots: 43, bv: 11, rw: 16, rn: 38, oAtt: 32, oGoals: 7, oShots: 43, oBv: 9, gkm: [4, 26, 12] } },
+    players: [
+      ["Aimée",     "gido", [0,0, 0,0, 0,1,  0,0, 0,0, 0,0, 0,1]],
+      ["Boaz",      "gido", [0,0, 0,0, 0,1,  0,0, 0,0, 0,0, 0,1]],
+      ["Gido",      "gido", [0,0, 0,4, 1,7,  0,0, 0,0, 0,0, 6,10]],
+      ["Juul",      "gido", [1,1, 0,3, 0,2,  0,0, 0,0, 0,0, 0,5]],
+      ["Loïs",      "gido", [0,0, 0,2, 0,4,  0,0, 0,0, 0,0, 4,6]],
+      ["Noah",      "gido", [0,0, 1,2, 1,8,  0,0, 0,0, 1,1, 4,8]],
+      ["Ramon",     "gido", [0,0, 0,0, 0,2,  0,0, 0,0, 0,0, 1,2]],
+      ["Yana",      "gido", [0,1, 0,4, 0,0,  0,0, 0,0, 0,0, 1,5]],
+      ["Christian", "mats", [0,0, 1,3, 1,1,  0,0, 0,0, 0,0, 2,2]],
+      ["Floor",     "mats", [0,0, 1,1, 2,9,  0,0, 0,0, 0,0, 3,7]],
+      ["Mats",      "mats", [0,0, 0,4, 1,10, 0,0, 0,0, 0,2, 5,13]],
+      ["Sofie",     "mats", [0,0, 1,4, 1,8,  0,0, 1,2, 0,0, 4,10]] ] }
+];
+// Veldseizoen najaar 2026, vijf wedstrijden (opgeteld uit Checkout)
+const VELD = {
+  n: 5, att: 297, goals: 68, shots: 400, bv: 64, rw: 170, rn: 332,
+  oAtt: 298, oGoals: 63, oShots: 448, oBv: 75,
+  d3: [11, 40], d6: [26, 136], d9: [20, 196], gkm: [57, 180, 135]
+};
+const VAK = {
+  mats: { name: "Vak Mats", short: "Mats", color: "var(--vak-mats)" },
+  gido: { name: "Vak Gido", short: "Gido", color: "var(--vak-gido)" }
+};
+
+const $ = (s) => document.querySelector(s);
+const pct = (g, a) => (a ? Math.round((100 * g) / a) + "%" : "–");
+const pct1 = (g, a) => (a ? ((100 * g) / a).toFixed(1).replace(".", ",") + "%" : "–");
+const signed = (n) => (n > 0 ? "+" + n : n < 0 ? "−" + Math.abs(n) : "0");
+const sCls = (n) => (n > 0 ? "pos" : n < 0 ? "neg" : "zero");
+const label = (m) => `${m.short} ${m.venue}`;
+const res = (m) => m.gf > m.ga ? { k: "W", cls: "pos", pill: "w", word: "gewonnen", Word: "Gewonnen", tile: "good" }
+  : m.gf === m.ga ? { k: "G", cls: "zero", pill: "d", word: "gelijk", Word: "Gelijkgespeeld", tile: "" }
+  : { k: "V", cls: "neg", pill: "l", word: "verloren", Word: "Verloren", tile: "bad" };
+
+let sel = "all";
+try { const s = localStorage.getItem("top-u19-zaal-sel"); if (s && (s === "all" || MATCHES.some((m) => m.id === s))) sel = s; } catch (e) {}
+const chosen = () => (sel === "all" ? MATCHES : MATCHES.filter((m) => m.id === sel));
+
+function sumTeam(ms, side) {
+  const t = { att: 0, goals: 0, shots: 0, bv: 0, rw: 0, rn: 0, gf: 0, ga: 0, w: 0, d: 0, l: 0 };
+  ms.forEach((m) => {
+    for (const k of ["att", "goals", "shots", "bv", "rw", "rn"]) t[k] += m[side][k];
+    t.gf += m.gf; t.ga += m.ga; if (m.gf > m.ga) t.w++; else if (m.gf === m.ga) t.d++; else t.l++;
+  });
+  return t;
+}
+function sumGkm(ms, vak) {
+  const r = [0, 0, 0];
+  ms.forEach((m) => (vak ? [vak] : ["mats", "gido"]).forEach((k) => m.vak[k].gkm.forEach((v, i) => (r[i] += v))));
+  return r;
+}
+const KEYS = ["g3","a3","g6","a6","g9","a9","gx","ax","gsw","asw","gvw","avw","grb","arb"];
+function sumPlayers(ms) {
+  const map = new Map();
+  ms.forEach((m) => m.players.forEach(([name, vak, s]) => {
+    if (!map.has(name)) map.set(name, { name, vakken: new Set(), s: new Array(14).fill(0) });
+    const p = map.get(name); p.vakken.add(vak); s.forEach((v, i) => (p.s[i] += v));
+  }));
+  return [...map.values()].map((p) => {
+    const o = { name: p.name, vakken: p.vakken };
+    KEYS.forEach((k, i) => (o[k] = p.s[i]));
+    o.g = o.g3 + o.g6 + o.g9 + o.gx; o.a = o.a3 + o.a6 + o.a9 + o.ax;
+    o.vak = p.vakken.size > 1 ? "beide" : [...p.vakken][0];
+    return o;
+  });
+}
+function sumDist(ms) {
+  const T = Object.fromEntries(KEYS.map((k) => [k, 0]));
+  sumPlayers(ms).forEach((p) => KEYS.forEach((k) => (T[k] += p[k])));
+  return T;
+}
+
+/* Tooltip */
+const tip = $("#tip");
+function showTip(e, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  let x = e.clientX + 14, y = e.clientY + 14;
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+  if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function bindTip(el, html) {
+  el.addEventListener("mousemove", (e) => showTip(e, html));
+  el.addEventListener("mouseleave", () => (tip.hidden = true));
+  el.addEventListener("click", (e) => { e.stopPropagation(); showTip(e, html); });
+}
+document.addEventListener("click", () => (tip.hidden = true));
+addEventListener("scroll", () => (tip.hidden = true), { passive: true });
+
+function renderHeader() {
+  const t = sumTeam(MATCHES, "top");
+  $("#nMatches").textContent = `${MATCHES.length} ${MATCHES.length === 1 ? "wedstrijd" : "wedstrijden"}`;
+  $("#record").innerHTML = `<div><b>${t.w}</b><span>gewonnen</span></div>${t.d ? `<div><b>${t.d}</b><span>gelijk</span></div>` : ""}<div><b>${t.l}</b><span>verloren</span></div><div><b>${t.gf}–${t.ga}</b><span>doelsaldo</span></div>`;
+  $("#foot").textContent = `Bijgewerkt ${UPDATED}. Bron: Checkout.`;
+  const f = $("#filters");
+  const mk = (id, html, aria) => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.type = "button"; b.dataset.id = id; b.innerHTML = html; b.setAttribute("aria-label", aria);
+    b.addEventListener("click", () => { sel = id; try { localStorage.setItem("top-u19-zaal-sel", id); } catch (e) {} renderAll(); });
+    f.appendChild(b);
+  };
+  mk("all", "Alle wedstrijden", "Alle wedstrijden");
+  MATCHES.forEach((m) => {
+    const r = res(m);
+    mk(m.id, `${label(m)} <span class="sc">${m.gf}–${m.ga}</span> <span class="wl ${r.cls}">${r.k}</span>`, `${m.opp} ${m.venue}, ${m.gf}–${m.ga}, ${r.word}`);
+  });
+}
+
+function renderTiles() {
+  const ms = chosen(), t = sumTeam(ms, "top"), o = sumTeam(ms, "tgn"), single = ms.length === 1;
+  const cmp = (a, b, hg) => {
+    const d = a - b; if (Math.abs(d) < 0.005) return ["", "gelijk aan tegenstander"];
+    const good = hg ? d > 0 : d < 0;
+    return [good ? "good" : "bad", `${good ? "beter" : "slechter"} dan tegenstander`];
+  };
+  const tiles = [{
+    t: single ? "Uitslag" : "Resultaat",
+    v: single ? `${t.gf}–${t.ga}` : (t.d ? `${t.w}–${t.d}–${t.l}` : `${t.w}–${t.l}`),
+    s: single ? "" : (t.d ? "W–G–V" : "W–V"),
+    f: single ? res(ms[0]).Word : `Doelsaldo ${t.gf}–${t.ga}`,
+    c: single ? res(ms[0]).tile : "" }];
+  [
+    ["Goals per aanval", t.goals / t.att, o.goals / o.att, pct1(t.goals, t.att), pct1(o.goals, o.att), `${t.goals} uit ${t.att} aanvallen`, true],
+    ["Rendement per schot", t.goals / t.shots, o.goals / o.shots, pct1(t.goals, t.shots), pct1(o.goals, o.shots), `${t.goals} uit ${t.shots} schoten`, true],
+    ["Balverlies", t.bv / t.att, o.bv / o.att, pct1(t.bv, t.att), pct1(o.bv, o.att), `${t.bv} van ${t.att} aanvallen`, false],
+    ["Aanvallende rebound", t.rw / t.rn, o.rw / o.rn, pct1(t.rw, t.rn), pct1(o.rw, o.rn), `${t.rw} van ${t.rn} gepakt`, true]
+  ].forEach(([name, a, b, va, vb, det, hg]) => {
+    const [c, txt] = cmp(a, b, hg);
+    tiles.push({ t: name, v: va, s: `tgn ${vb}`, f: `${det} · ${txt}`, c });
+  });
+  const k = sumGkm(ms), kt = k[0] + k[1] + k[2], vk = VELD.gkm, vt = vk[0] + vk[1] + vk[2];
+  const zr = (k[0] + k[1]) / kt, vr = (vk[0] + vk[1]) / vt;
+  tiles.push({ t: "Raakt de korf", v: pct1(k[0] + k[1], kt), s: `veld ${pct1(vk[0] + vk[1], vt)}`,
+    f: `${k[0] + k[1]} van ${kt} veldschoten · ${zr >= vr ? "beter" : "slechter"} dan op het veld`, c: zr >= vr ? "good" : "bad" });
+  $("#tiles").innerHTML = tiles.map((x) => `<div class="tile"><span class="t">${x.t}</span><div class="v"><b>${x.v}</b><small>${x.s}</small></div><span class="f ${x.c}">${x.f}</span></div>`).join("");
+}
+
+function groupedChart(el, key, fmtDet, max) {
+  let h = `<div class="gchart">`;
+  for (let v = 0; v <= max; v += 10) h += `<div class="gl ${v === 0 ? "base" : ""}" style="bottom:${(v / max) * 100}%"><span>${v}%</span></div>`;
+  h += `<div class="groups">`;
+  MATCHES.forEach((m) => {
+    const dim = sel !== "all" && sel !== m.id;
+    const a = m.top[key] / m.top.att, b = m.tgn[key] / m.tgn.att;
+    h += `<div class="grp ${dim ? "dim" : ""}">
+      <div class="bar top" tabindex="0" data-m="${m.id}" data-s="top" style="height:${(a * 100 / max) * 100}%"><span class="bl">${Math.round(a * 100)}%</span></div>
+      <div class="bar opp" tabindex="0" data-m="${m.id}" data-s="tgn" style="height:${(b * 100 / max) * 100}%"><span class="bl">${Math.round(b * 100)}%</span></div>
+    </div>`;
+  });
+  h += `</div></div><div class="xl">${MATCHES.map((m) => `<div>${m.short}<small>${m.venue} · ${m.gf}–${m.ga}</small></div>`).join("")}</div>`;
+  el.innerHTML = h;
+  el.querySelectorAll(".bar").forEach((b) => {
+    const m = MATCHES.find((x) => x.id === b.dataset.m), side = b.dataset.s;
+    bindTip(b, `<b>${side === "top" ? "TOP" : m.opp}</b><br>${label(m)}, ${m.gf}–${m.ga}<br>${fmtDet(m[side])}`);
+  });
+}
+
+function renderMatches() {
+  groupedChart($("#chartAtt"), "goals", (d) => `${pct(d.goals, d.att)} · ${d.goals} goals uit ${d.att} aanvallen`, 40);
+  groupedChart($("#chartBv"), "bv", (d) => `${pct(d.bv, d.att)} · ${d.bv} keer balverlies in ${d.att} aanvallen`, 40);
+  const row = (name, r, t, o, cls) => `<tr class="${cls}"><td>${name}</td><td>${r}</td>
+    <td>${t.att}<span class="m">${o.att}</span></td>
+    <td>${pct(t.goals, t.att)}<span class="m">${pct(o.goals, o.att)}</span></td>
+    <td>${t.shots}<span class="m">${o.shots}</span></td>
+    <td>${pct(t.goals, t.shots)}<span class="m">${pct(o.goals, o.shots)}</span></td>
+    <td>${pct(t.bv, t.att)}<span class="m">${pct(o.bv, o.att)}</span></td>
+    <td>${pct(t.rw, t.rn)}<span class="m">${pct(o.rw, o.rn)}</span></td></tr>`;
+  let h = `<caption>Eerste getal TOP, grijs getal tegenstander</caption><thead><tr><th>Wedstrijd</th><th>Uitslag</th><th>Aanvallen</th><th>Goals/aanval</th><th>Schoten</th><th>Rendement</th><th>Balverlies</th><th>Rebound</th></tr></thead><tbody>`;
+  MATCHES.forEach((m) => {
+    const r = res(m);
+    h += row(`${m.opp} <span class="m">${m.venue}</span>`, `${m.gf}–${m.ga} <span class="res ${r.pill}">${r.k}</span>`, m.top, m.tgn, sel === m.id ? "sel" : "");
+  });
+  const t = sumTeam(MATCHES, "top"), o = sumTeam(MATCHES, "tgn");
+  h += row(`<b>Totaal</b>`, `<b>${t.gf}–${t.ga}</b>`, t, o, sel === "all" ? "sel" : "") + `</tbody>`;
+  $("#mtable").innerHTML = h;
+}
+
+function renderCompare() {
+  const ms = chosen(), t = sumTeam(ms, "top"), o = sumTeam(ms, "tgn"), T = sumDist(ms), k = sumGkm(ms);
+  const pos = T.a3 + T.a6 + T.a9, kt = k[0] + k[1] + k[2];
+  const V = VELD, vpos = V.d3[1] + V.d6[1] + V.d9[1], vkt = V.gkm[0] + V.gkm[1] + V.gkm[2];
+  const rows = [
+    ["Aanvallen per wedstrijd", "tempo", V.att / V.n, t.att / ms.length, (x) => Math.round(x), null],
+    ["Goals per aanval", "", V.goals / V.att, t.goals / t.att, null, true],
+    ["Rendement per schot", "", V.goals / V.shots, t.goals / t.shots, null, true],
+    ["Balverlies", "deel van de aanvallen", V.bv / V.att, t.bv / t.att, null, false],
+    ["Aanvallende rebound", "", V.rw / V.rn, t.rw / t.rn, null, true],
+    ["Raakt de korf", "goal of korf geraakt", (V.gkm[0] + V.gkm[1]) / vkt, (k[0] + k[1]) / kt, null, true],
+    ["Mis", "korf niet geraakt", V.gkm[2] / vkt, k[2] / kt, null, false],
+    ["Aandeel van 9 meter", "van de veldschoten", V.d9[1] / vpos, T.a9 / pos, null, null],
+    ["Rendement 9 meter", "", V.d9[0] / V.d9[1], T.g9 / T.a9, null, true],
+    ["Rendement 3 meter", "", V.d3[0] / V.d3[1], T.g3 / T.a3, null, true],
+    ["Rendement tegenstander", "per schot", V.oGoals / V.oShots, o.goals / o.shots, null, false]
+  ];
+  const fp = (x) => Math.round(x * 100) + "%";
+  let h = `<caption>${sel === "all" ? "Zaal: alle zaalwedstrijden tot nu toe." : "Zaal: alleen de gekozen wedstrijd."} Groen = beter dan op het veld, rood = slechter.</caption>
+    <thead><tr><th>Wat</th><th>Veld (${V.n})</th><th>Zaal (${ms.length})</th></tr></thead><tbody>`;
+  rows.forEach(([n, sub, v, z, f, hg]) => {
+    const fmt = f || fp;
+    let d = "";
+    if (hg !== null && Math.abs(z - v) >= 0.005) {
+      const good = hg ? z > v : z < v;
+      d = `<span class="delta ${good ? "pos" : "neg"}">${good ? "beter" : "slechter"}</span>`;
+    }
+    h += `<tr><td>${n}${sub ? `<small>${sub}</small>` : ""}</td><td>${fmt(v)}</td><td>${Number.isFinite(z) ? fmt(z) : "–"}${d}</td></tr>`;
+  });
+  $("#cmp").innerHTML = h + `</tbody>`;
+}
+
+function renderKorf() {
+  const row = (name, sub, color, k, dim, ref) => {
+    const n = k[0] + k[1] + k[2];
+    const seg = (cls, v, lbl) => (v ? `<div class="${cls}" style="flex:${v}">${v / n >= 0.12 ? `${lbl} ${Math.round((100 * v) / n)}%` : v / n >= 0.06 ? Math.round((100 * v) / n) + "%" : ""}</div>` : "");
+    return `<div class="kgrow ${dim ? "dim" : ""} ${ref ? "ref" : ""}" data-tip="${name}${sub ? ", " + sub : ""}: ${k[0]} goal, ${k[1]} korf geraakt, ${k[2]} mis (${n} schoten)">
+      <div class="kn">${color ? `<i style="background:${color}"></i>` : ""}${name}<small>${sub}</small></div>
+      <div class="stack">${seg("g", k[0], "goal")}${seg("k", k[1], "korf")}${seg("x", k[2], "mis")}</div>
+      <div class="kv2">${pct(k[0] + k[1], n)}<small>raakt korf</small></div></div>`;
+  };
+  let h = "";
+  MATCHES.forEach((m) => ["mats", "gido"].forEach((v) => {
+    h += row(VAK[v].name, `${label(m)} · ${m.vak[v].gkm.reduce((a, b) => a + b)} schoten`, VAK[v].color, m.vak[v].gkm, sel !== "all" && sel !== m.id);
+  }));
+  const k = sumGkm(chosen());
+  h += row("Zaal totaal", sel === "all" ? `${MATCHES.length} wedstrijden` : "gekozen wedstrijd", "", k, false, true);
+  h += row("Veld", `${VELD.n} wedstrijden`, "", VELD.gkm, false, false);
+  $("#kg").innerHTML = h;
+  $("#kg").querySelectorAll(".kgrow").forEach((r) => bindTip(r, r.dataset.tip));
+}
+
+function renderVakken() {
+  const ms = chosen(), names = {};
+  MATCHES.forEach((m) => m.players.forEach(([n, v]) => { if (n !== "Onbekend") (names[v] ||= new Set()).add(n); }));
+  $("#vakcards").innerHTML = ["mats", "gido"].map((k) => {
+    const s = { att: 0, goals: 0, shots: 0, bv: 0, rw: 0, rn: 0, oAtt: 0, oGoals: 0, oShots: 0, oBv: 0 };
+    ms.forEach((m) => { for (const f in s) s[f] += m.vak[k][f]; });
+    const g = sumGkm(ms, k), gn = g[0] + g[1] + g[2];
+    const saldo = s.goals - s.oGoals;
+    const strip = MATCHES.map((m) => {
+      const v = m.vak[k], d = v.goals - v.oGoals;
+      return `<div class="${sel !== "all" && sel !== m.id ? "dim" : ""}"><b class="${sCls(d)}">${signed(d)}</b><small>${v.goals}–${v.oGoals}</small><small>${label(m)}</small></div>`;
+    }).join("");
+    const who = [...names[k]].sort((a, b) => a.localeCompare(b, "nl")).join(", ");
+    return `<div class="vak">
+      <div class="vh">
+        <div><h3><i style="background:${VAK[k].color}"></i>${VAK[k].name}</h3><div class="who">${who}</div></div>
+        <div class="saldo"><b class="${sCls(saldo)}">${signed(saldo)}</b><span>${s.goals}–${s.oGoals}</span></div>
+      </div>
+      <div class="kv">
+        <div><span>Goals per aanval</span><b>${pct(s.goals, s.att)}<small>${s.goals}/${s.att}</small></b></div>
+        <div><span>Rendement per schot</span><b>${pct(s.goals, s.shots)}<small>${s.goals}/${s.shots}</small></b></div>
+        <div><span>Raakt de korf</span><b>${pct(g[0] + g[1], gn)}<small>${g[0] + g[1]}/${gn}</small></b></div>
+        <div><span>Balverlies</span><b>${pct(s.bv, s.att)}<small>${s.bv}/${s.att}</small></b></div>
+        <div><span>Aanvallende rebound</span><b>${pct(s.rw, s.rn)}<small>${s.rw}/${s.rn}</small></b></div>
+        <div><span>Tegenstander per aanval</span><b>${pct(s.oGoals, s.oAtt)}<small>${s.oGoals}/${s.oAtt}</small></b></div>
+      </div>
+      <div class="strip" aria-label="Doelsaldo per wedstrijd">${strip}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderDistance() {
+  const T = sumDist(chosen()), V = VELD;
+  const pos = T.a3 + T.a6 + T.a9;
+  $("#distHint").textContent = `${pos} veldschoten met positie · ${T.asw + T.avw} strafworpen en vrije worpen · streepje = veld`;
+  const row = (n, sub, g, a, sp, ref) => `<div class="drow ${sp ? "sp" : ""}" tabindex="0" data-tip="${n}: ${g} uit ${a}${a ? ` (${pct(g, a)})` : ""}${ref ? ` · veld ${ref[0]} uit ${ref[1]} (${pct(ref[0], ref[1])})` : ""}">
+      <div class="dn">${n}<small>${sub}</small></div>
+      <div class="track"><div class="fill" style="width:${a ? (g / a) * 100 : 0}%"></div>${ref ? `<div class="vmark" style="left:calc(${(ref[0] / ref[1]) * 100}% - 1px)" aria-hidden="true"><span>veld</span></div>` : ""}</div>
+      <div class="pv">${pct(g, a)}</div><div class="gv">${g}/${a}</div></div>`;
+  $("#dist").innerHTML =
+    `<div class="ticks"><div></div><div><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><div></div><div></div></div>` +
+    row("3 meter", `${pct(T.a3, pos)} van de schoten`, T.g3, T.a3, false, V.d3) +
+    row("6 meter", `${pct(T.a6, pos)} van de schoten`, T.g6, T.a6, false, V.d6) +
+    row("9 meter", `${pct(T.a9, pos)} van de schoten`, T.g9, T.a9, false, V.d9) +
+    `<div class="dsep"></div>` +
+    row("Strafworp", "apart geteld", T.gsw, T.asw, true) +
+    row("Vrije worp", "apart geteld", T.gvw, T.avw, true);
+  $("#dist").querySelectorAll(".drow").forEach((r) => bindTip(r, r.dataset.tip));
+  const vpos = V.d3[1] + V.d6[1] + V.d9[1];
+  const bar = (a3, a6, a9, tot) => {
+    const seg = (cls, n, a) => (a ? `<div class="${cls}" style="flex:${a}" title="${n}: ${a} schoten (${pct(a, tot)})">${a / tot >= 0.07 ? `${n} ${pct(a, tot)}` : ""}</div>` : "");
+    return `<div class="share">${seg("s3", "3m", a3)}${seg("s6", "6m", a6)}${seg("s9", "9m", a9)}</div>`;
+  };
+  $("#shares").innerHTML = `<div class="srow"><span>Zaal</span>${bar(T.a3, T.a6, T.a9, pos)}</div><div class="srow"><span>Veld</span>${bar(V.d3[1], V.d6[1], V.d9[1], vpos)}</div>`;
+}
+
+let sortKey = "a", sortDir = -1;
+const COLS = [
+  { k: "name", h: "Speler" }, { k: "vak", h: "Vak" }, { k: "a", h: "Schoten" }, { k: "g", h: "Goals" },
+  { k: "pt", h: "Rendement" }, { k: "share", h: "Aandeel" }, { k: "a3", h: "3m" }, { k: "a6", h: "6m" }, { k: "a9", h: "9m" },
+  { k: "asw", h: "Strafworp" }, { k: "avw", h: "Vrije worp" }, { k: "prb", h: "Rebound" }
+];
+function renderPlayers() {
+  const ps = sumPlayers(chosen());
+  const field = ps.reduce((a, p) => a + p.a, 0);
+  ps.forEach((p) => { p.pt = p.a ? p.g / p.a : -1; p.share = p.a / field; p.prb = p.arb ? p.grb / p.arb : -1; });
+  ps.sort((x, y) => {
+    const a = x[sortKey], b = y[sortKey];
+    if (typeof a === "string") return sortDir * a.localeCompare(b, "nl");
+    return sortDir * (a - b) || y.a - x.a;
+  });
+  const cell = (g, a) => (a ? `<td class="${a < 5 ? "small" : ""}">${g}/${a}<span class="m">${pct(g, a)}</span></td>` : `<td class="na">–</td>`);
+  const vakCell = (p) => p.vak === "beide"
+    ? `<td style="text-align:left"><span class="vdot" style="background:var(--vak-mats)"></span><span class="vdot" style="background:var(--vak-gido)"></span> beide</td>`
+    : `<td style="text-align:left"><span class="vdot" style="background:${VAK[p.vak].color}"></span> ${VAK[p.vak].short}</td>`;
+  let h = `<caption>Balkje bij rendement loopt tot 40%. Afstandskolommen sorteren op aantal schoten.</caption><thead><tr>${COLS.map((c) => `<th ${c.k === sortKey ? 'aria-sort="' + (sortDir < 0 ? "descending" : "ascending") + '"' : ""}><button type="button" data-k="${c.k}">${c.h}</button></th>`).join("")}</tr></thead><tbody>`;
+  ps.forEach((p) => {
+    h += `<tr>
+      <td class="pname">${p.name}</td>${vakCell(p)}
+      <td>${p.a}</td><td>${p.g}</td>
+      <td class="${p.a < 10 ? "small" : ""}">${pct(p.g, p.a)}${p.a ? `<span class="mini"><i style="width:${Math.min(100, (p.g / p.a) * 250)}%"></i></span>` : ""}</td>
+      <td>${pct(p.a, field)}</td>
+      ${cell(p.g3, p.a3)}${cell(p.g6, p.a6)}${cell(p.g9, p.a9)}${cell(p.gsw, p.asw)}${cell(p.gvw, p.avw)}${cell(p.grb, p.arb)}
+    </tr>`;
+  });
+  const T = {}; ["g","a",...KEYS].forEach((k) => (T[k] = ps.reduce((s, p) => s + p[k], 0)));
+  h += `<tr style="font-weight:600"><td>Team</td><td></td><td>${T.a}</td><td>${T.g}</td><td>${pct(T.g, T.a)}<span class="mini"><i style="width:${Math.min(100, (T.g / T.a) * 250)}%"></i></span></td><td>100%</td>
+    ${cell(T.g3, T.a3)}${cell(T.g6, T.a6)}${cell(T.g9, T.a9)}${cell(T.gsw, T.asw)}${cell(T.gvw, T.avw)}${cell(T.grb, T.arb)}</tr></tbody>`;
+  $("#ptable").innerHTML = h;
+  $("#ptable").querySelectorAll("th button").forEach((b) => b.addEventListener("click", () => {
+    const k = b.dataset.k;
+    if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = k === "name" || k === "vak" ? 1 : -1; }
+    renderPlayers();
+  }));
+}
+
+function renderAll() {
+  document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.id === sel)));
+  $("#kern").hidden = sel !== "all";
+  renderTiles(); renderMatches(); renderCompare(); renderKorf(); renderVakken(); renderDistance(); renderPlayers();
+}
+renderHeader();
+renderAll();
+</script>
+</body>
+</html>
