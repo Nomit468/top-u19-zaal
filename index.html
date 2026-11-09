@@ -433,6 +433,9 @@ const pct1 = (g, a) => (a ? ((100 * g) / a).toFixed(1).replace(".", ",") + "%" :
 const signed = (n) => (n > 0 ? "+" + n : n < 0 ? "−" + Math.abs(n) : "0");
 const sCls = (n) => (n > 0 ? "pos" : n < 0 ? "neg" : "zero");
 const label = (m) => `${m.short} ${m.venue}`;
+// Stand zoals gebruikelijk: thuisploeg eerst
+const score = (m) => (m.venue === "uit" ? `${m.ga}–${m.gf}` : `${m.gf}–${m.ga}`);
+const fixture = (m) => (m.venue === "uit" ? `${m.short} – TOP` : `TOP – ${m.short}`);
 const res = (m) => m.gf > m.ga ? { k: "W", cls: "pos", pill: "w", word: "gewonnen", Word: "Gewonnen", tile: "good" }
   : m.gf === m.ga ? { k: "G", cls: "zero", pill: "d", word: "gelijk", Word: "Gelijkgespeeld", tile: "" }
   : { k: "V", cls: "neg", pill: "l", word: "verloren", Word: "Verloren", tile: "bad" };
@@ -513,7 +516,7 @@ function renderHeader() {
   mk("comp", "Competitie", "Alleen competitiewedstrijden");
   MATCHES.forEach((m) => {
     const r = res(m);
-    mk(m.id, `${label(m)} <span class="sc">${m.gf}–${m.ga}</span> <span class="wl ${r.cls}">${r.k}</span>${m.type === "oefen" ? ' <span class="wl" style="font-weight:400;opacity:.7">oefen</span>' : ""}`, `${m.opp} ${m.venue}, ${m.gf}–${m.ga}, ${r.word}${m.type === "oefen" ? ", oefenwedstrijd" : ""}`);
+    mk(m.id, `${label(m)} <span class="sc">${score(m)}</span> <span class="wl ${r.cls}">${r.k}</span>${m.type === "oefen" ? ' <span class="wl" style="font-weight:400;opacity:.7">oefen</span>' : ""}`, `${m.opp} ${m.venue}, ${score(m)}, ${r.word}${m.type === "oefen" ? ", oefenwedstrijd" : ""}`);
   });
 }
 
@@ -526,8 +529,8 @@ function renderTiles() {
   };
   const tiles = [{
     t: single ? "Uitslag" : "Resultaat",
-    v: single ? `${t.gf}–${t.ga}` : (t.d ? `${t.w}–${t.d}–${t.l}` : `${t.w}–${t.l}`),
-    s: single ? "" : (t.d ? "W–G–V" : "W–V"),
+    v: single ? score(ms[0]) : (t.d ? `${t.w}–${t.d}–${t.l}` : `${t.w}–${t.l}`),
+    s: single ? fixture(ms[0]) : (t.d ? "W–G–V" : "W–V"),
     f: single ? res(ms[0]).Word : `Doelsaldo ${t.gf}–${t.ga}`,
     c: single ? res(ms[0]).tile : "" }];
   [
@@ -558,11 +561,11 @@ function groupedChart(el, key, fmtDet, max) {
       <div class="bar opp" tabindex="0" data-m="${m.id}" data-s="tgn" style="height:${(b * 100 / max) * 100}%"><span class="bl">${Math.round(b * 100)}%</span></div>
     </div>`;
   });
-  h += `</div></div><div class="xl">${MATCHES.map((m) => `<div>${m.short}<small>${m.venue} · ${m.gf}–${m.ga}</small></div>`).join("")}</div>`;
+  h += `</div></div><div class="xl">${MATCHES.map((m) => `<div>${m.short}<small>${m.venue} · ${score(m)}</small></div>`).join("")}</div>`;
   el.innerHTML = h;
   el.querySelectorAll(".bar").forEach((b) => {
     const m = MATCHES.find((x) => x.id === b.dataset.m), side = b.dataset.s;
-    bindTip(b, `<b>${side === "top" ? "TOP" : m.opp}</b><br>${label(m)}, ${m.gf}–${m.ga}<br>${fmtDet(m[side])}`);
+    bindTip(b, `<b>${side === "top" ? "TOP" : m.opp}</b><br>${label(m)}, ${score(m)}<br>${fmtDet(m[side])}`);
   });
 }
 
@@ -579,10 +582,10 @@ function renderMatches() {
   let h = `<caption>Eerste getal TOP, grijs getal tegenstander</caption><thead><tr><th>Wedstrijd</th><th>Uitslag</th><th>Aanvallen</th><th>Goals/aanval</th><th>Schoten</th><th>Rendement</th><th>Balverlies</th><th>Rebound</th></tr></thead><tbody>`;
   MATCHES.forEach((m) => {
     const r = res(m);
-    h += row(`${m.opp} <span class="m">${m.venue}</span>${typeTag(m)}`, `${m.gf}–${m.ga} <span class="res ${r.pill}">${r.k}</span>`, m.top, m.tgn, sel !== "all" && inSel(m) ? "sel" : "");
+    h += row(`${m.opp} <span class="m">${m.venue}</span>${typeTag(m)}`, `${score(m)} <span class="res ${r.pill}">${r.k}</span>`, m.top, m.tgn, sel !== "all" && inSel(m) ? "sel" : "");
   });
   const t = sumTeam(MATCHES, "top"), o = sumTeam(MATCHES, "tgn");
-  h += row(`<b>Totaal</b>`, `<b>${t.gf}–${t.ga}</b>`, t, o, sel === "all" ? "sel" : "") + `</tbody>`;
+  h += row(`<b>Totaal</b>`, `<b>${t.gf}–${t.ga}</b> <span class="m">voor–tegen</span>`, t, o, sel === "all" ? "sel" : "") + `</tbody>`;
   $("#mtable").innerHTML = h;
 }
 
