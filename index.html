@@ -112,6 +112,7 @@ h2 { font-size: 22px; font-weight: 700; }
 .grp { display: flex; justify-content: center; align-items: flex-end; gap: 2px; height: 100%; transition: opacity .15s; }
 .grp.dim { opacity: .35; }
 .bar { width: min(34px, 30%); border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
+.grp .na-bar { align-self: center; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.2; }
 .bar.top { background: var(--top); } .bar.opp { background: var(--opp); }
 .bar .bl { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--ink-2); padding-bottom: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .xl { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; margin-left: 30px; margin-top: 6px; }
@@ -250,15 +251,16 @@ footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
   </section>
 
   <section class="notes" id="kern">
-    <h3>Wat opvalt na drie zaalwedstrijden</h3>
+    <h3>Wat opvalt na vier zaalwedstrijden</h3>
     <ul>
-      <li><b>De rebound beslist.</b> In de twee verloren wedstrijden pakte de tegenstander 60% en 66% van de eigen rebounds, en schoot daardoor 123 en 117 keer, tegen 87 en 76 keer bij TOP. Tegen LDODK, de gewonnen wedstrijd, was dat 46%.</li>
-      <li><b>In de zaal verliest TOP vaker de bal dan de tegenstander.</b> 23% van de aanvallen eindigt in balverlies, bij de tegenstanders 19%. Op het veld was dat andersom (22% tegen 25%). Tegen Unitas liep het op tot 30%.</li>
+      <li><b>De rebound beslist.</b> In de drie verloren wedstrijden pakte de tegenstander 60%, 66% en 76% van de eigen rebounds, en schoot daardoor 123, 117 en 123 keer, tegen 87, 76 en 89 keer bij TOP. Tegen LDODK, de gewonnen wedstrijd, was dat 46%.</li>
+      <li><b>Tegen GG lag het vooral aan de rebound.</b> GG pakte 67 van de 88 eigen rebounds. Het rendement per veldschot lag minder ver uit elkaar: 18% bij TOP (15 uit 82), 24% bij GG (27 uit 113). Beide vakken verloren hun helft met 4 doelpunten verschil.</li>
+      <li><b>In de zaal verliest TOP vaker de bal dan de tegenstander</b> (de eerste drie wedstrijden; tegen GG is balverlies niet geregistreerd). 23% van de aanvallen eindigt in balverlies, bij de tegenstanders 19%. Op het veld was dat andersom (22% tegen 25%). Tegen Unitas liep het op tot 30%.</li>
       <li><b>Het tempo ligt hoger.</b> Gemiddeld 74 aanvallen per wedstrijd, tegen 59 op het veld.</li>
-      <li><b>Iets meer schoten raken de korf dan op het veld.</b> 68% tegen 64%. Tegen Unitas zakte het naar 59%: 28 van de 68 veldschoten raakten de korf niet.</li>
+      <li><b>Iets meer schoten raken de korf dan op het veld</b> (de eerste drie wedstrijden). 68% tegen 64%. Tegen Unitas zakte het naar 59%: 28 van de 68 veldschoten raakten de korf niet.</li>
       <li><b>Tegen Unitas kwamen 6 van de 14 goals uit strafworpen</b> (6 uit 6). Uit het veld scoorde TOP 8 uit 68, ofwel 12%.</li>
     </ul>
-    <p class="caveat">De eerste twee zaalwedstrijden waren oefenwedstrijden. Kies Competitie bovenaan om alleen de competitie te zien.</p>
+    <p class="caveat">De eerste twee zaalwedstrijden waren oefenwedstrijden; Unitas en GG waren competitie. Kies Competitie bovenaan om alleen de competitie te zien.</p>
   </section>
 
   <section id="wedstrijden">
@@ -339,12 +341,13 @@ footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
   <section class="notes">
     <h3>Zo lees je dit</h3>
     <ul>
-      <li>LDODK en PKC waren oefenwedstrijden, Unitas was de eerste competitiewedstrijd. "Alle wedstrijden" telt beide mee; "Competitie" alleen de competitie.</li>
+      <li>LDODK en PKC waren oefenwedstrijden, Unitas en GG competitiewedstrijden. "Alle wedstrijden" telt beide mee; "Competitie" alleen de competitie.</li>
       <li>Alle cijfers komen uit Checkout en zijn per wedstrijd overgenomen. Checkout zelf toont geen totalen over meerdere wedstrijden; die zijn hier opgeteld.</li>
       <li>Met schotklok moet de aanval binnen 25 seconden de korf raken. "Korf geraakt" betekent: het schot raakte de korf maar ging er niet in. Samen met de goals is dat het deel dat de schotklok opnieuw laat lopen.</li>
       <li>Checkout registreert een verlopen schotklok niet apart. Die zit, net als slechte passes en overtredingen, in balverlies.</li>
       <li>Veldschoten zijn schoten uit het spel. Checkout telt strafworpen en vrije worpen niet mee in de totalen per speler, daarom staan ze apart. Eén vrije worp tegen LDODK staat op "Onbekend".</li>
       <li>Eén goal van Sofie tegen LDODK heeft in Checkout geen schotpositie. Die telt mee in het totaal van Sofie, maar niet bij de afstanden en niet bij korf geraakt.</li>
+      <li>GG thuis (20–28) komt niet uit Checkout maar uit de statistiekenexport van TeamTV. Die registreert geen balverlies, geen korf geraakt en geen 3, 6 of 9 meter. Daarom ontbreekt GG bij balverlies en korf geraakt, en tellen de veldschoten tegen GG wel mee in de spelerstotalen maar niet bij de afstanden. Vak Mats is daar de 1e aanval, Vak Gido de 1e verdediging.</li>
       <li>In de zaal wisselen spelers vaker van vak. Vak Mats en Vak Gido zijn genoemd naar de vaste kern. Wie in beide vakken speelde, staat in de spelerstabel als "beide".</li>
       <li>Schotafstanden en korf geraakt van tegenstanders worden niet geregistreerd, dus die vergelijking ontbreekt.</li>
       <li>Percentages op minder dan 10 schoten zeggen weinig. Eén goal meer of minder verandert ze al sterk.</li>
@@ -357,7 +360,7 @@ footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
 <script>
 // Spelers: [3m g,a, 6m g,a, 9m g,a, zonder positie g,a, strafworp g,a, vrije worp g,a, rebound g,a]
 // gkm per vak: [goal, korf geraakt, mis] over schoten met positie
-const UPDATED = "9 november 2026";
+const UPDATED = "21 november 2026";
 const MATCHES = [
   { id: "ldodk", type: "oefen", opp: "LDODK/Rinsma Modeplein", short: "LDODK", venue: "thuis", gf: 27, ga: 17,
     top: { att: 79, goals: 27, shots: 105, bv: 13, rw: 40, rn: 78 },
@@ -414,7 +417,29 @@ const MATCHES = [
       ["Juul",      "gido", [2,4, 0,3, 0,6,  0,0, 2,2, 0,1, 5,11]],
       ["Noah",      "gido", [0,3, 0,4, 0,2,  0,0, 0,0, 0,0, 4,9]],
       ["Sofie",     "gido", [0,0, 0,0, 0,1,  0,0, 0,0, 0,0, 0,1]],
-      ["Yana",      "gido", [1,2, 0,2, 0,2,  0,0, 0,0, 0,0, 1,5]] ] }
+      ["Yana",      "gido", [1,2, 0,2, 0,2,  0,0, 0,0, 0,0, 1,5]] ] },
+  // Bron: TeamTV-statistiekenexport (geen Checkout). Geen balverlies, geen korf geraakt en geen 3/6/9 meter:
+  // veldschoten staan daarom als "zonder positie" (gx,ax). bv en gkm zijn null = niet geregistreerd.
+  { id: "gg", type: "competitie", src: "export", opp: "GG/OICTS.com", short: "GG", venue: "thuis", gf: 20, ga: 28,
+    top: { att: 74, goals: 20, shots: 89, bv: null, rw: 31, rn: 63 },
+    tgn: { att: 74, goals: 28, shots: 123, bv: null, rw: 67, rn: 88 },
+    vak: {
+      mats: { att: 36, goals: 12, shots: 41, bv: null, rw: 15, rn: 27, oAtt: 37, oGoals: 16, oShots: 70, oBv: null, gkm: null },
+      gido: { att: 38, goals: 8, shots: 48, bv: null, rw: 16, rn: 36, oAtt: 37, oGoals: 12, oShots: 53, oBv: null, gkm: null } },
+    players: [
+      ["Christian", "mats", [0,0, 0,0, 0,0, 1,2,  0,0, 0,0, 4,4]],
+      ["Floor",     "mats", [0,0, 0,0, 0,0, 1,7,  0,0, 0,0, 0,3]],
+      ["Mats",      "mats", [0,0, 0,0, 0,0, 2,9,  1,1, 2,2, 8,15]],
+      ["Ramon",     "mats", [0,0, 0,0, 0,0, 3,9,  0,0, 0,0, 3,5]],
+      ["Sofie",     "mats", [0,0, 0,0, 0,0, 2,11, 0,0, 0,0, 0,0]],
+      ["Boaz",      "gido", [0,0, 0,0, 0,0, 2,5,  0,0, 0,0, 0,1]],
+      ["Christian", "gido", [0,0, 0,0, 0,0, 0,0,  0,0, 0,0, 1,5]],
+      ["Faja",      "gido", [0,0, 0,0, 0,0, 0,0,  0,0, 0,0, 1,1]],
+      ["Gerben",    "gido", [0,0, 0,0, 0,0, 0,0,  0,0, 0,0, 0,0]],
+      ["Gido",      "gido", [0,0, 0,0, 0,0, 1,17, 0,0, 0,0, 6,12]],
+      ["Juul",      "gido", [0,0, 0,0, 0,0, 2,10, 1,1, 1,3, 4,9]],
+      ["Ramon",     "gido", [0,0, 0,0, 0,0, 0,4,  0,0, 0,0, 1,3]],
+      ["Yana",      "gido", [0,0, 0,0, 0,0, 1,8,  0,0, 0,0, 3,5]] ] }
 ];
 // Veldseizoen najaar 2026, vijf wedstrijden (opgeteld uit Checkout)
 const VELD = {
@@ -429,6 +454,8 @@ const VAK = {
 
 const $ = (s) => document.querySelector(s);
 const pct = (g, a) => (a ? Math.round((100 * g) / a) + "%" : "–");
+// Balverlies telt alleen wedstrijden waarin het geregistreerd is
+const bvPct = (d) => (d.bv == null ? "–" : pct(d.bv, d.bvAtt ?? d.att));
 const pct1 = (g, a) => (a ? ((100 * g) / a).toFixed(1).replace(".", ",") + "%" : "–");
 const signed = (n) => (n > 0 ? "+" + n : n < 0 ? "−" + Math.abs(n) : "0");
 const sCls = (n) => (n > 0 ? "pos" : n < 0 ? "neg" : "zero");
@@ -448,16 +475,17 @@ const selName = () => (sel === "all" ? `${MATCHES.length} wedstrijden` : sel ===
 const typeTag = (m) => (m.type === "oefen" ? ` <span class="m">oefen</span>` : "");
 
 function sumTeam(ms, side) {
-  const t = { att: 0, goals: 0, shots: 0, bv: 0, rw: 0, rn: 0, gf: 0, ga: 0, w: 0, d: 0, l: 0 };
+  const t = { att: 0, goals: 0, shots: 0, bv: 0, bvAtt: 0, rw: 0, rn: 0, gf: 0, ga: 0, w: 0, d: 0, l: 0 };
   ms.forEach((m) => {
-    for (const k of ["att", "goals", "shots", "bv", "rw", "rn"]) t[k] += m[side][k];
+    for (const k of ["att", "goals", "shots", "rw", "rn"]) t[k] += m[side][k];
+    if (m[side].bv != null) { t.bv += m[side].bv; t.bvAtt += m[side].att; }
     t.gf += m.gf; t.ga += m.ga; if (m.gf > m.ga) t.w++; else if (m.gf === m.ga) t.d++; else t.l++;
   });
   return t;
 }
 function sumGkm(ms, vak) {
   const r = [0, 0, 0];
-  ms.forEach((m) => (vak ? [vak] : ["mats", "gido"]).forEach((k) => m.vak[k].gkm.forEach((v, i) => (r[i] += v))));
+  ms.forEach((m) => (vak ? [vak] : ["mats", "gido"]).forEach((k) => (m.vak[k].gkm || []).forEach((v, i) => (r[i] += v))));
   return r;
 }
 const KEYS = ["g3","a3","g6","a6","g9","a9","gx","ax","gsw","asw","gvw","avw","grb","arb"];
@@ -504,7 +532,7 @@ function renderHeader() {
   const nc = MATCHES.filter((m) => m.type === "competitie").length;
   $("#nMatches").textContent = `${MATCHES.length} ${MATCHES.length === 1 ? "wedstrijd" : "wedstrijden"}, waarvan ${nc} competitie`;
   $("#record").innerHTML = `<div><b>${t.w}</b><span>gewonnen</span></div>${t.d ? `<div><b>${t.d}</b><span>gelijk</span></div>` : ""}<div><b>${t.l}</b><span>verloren</span></div><div><b>${t.gf}–${t.ga}</b><span>doelsaldo</span></div>`;
-  $("#foot").textContent = `Bijgewerkt ${UPDATED}. Bron: Checkout.`;
+  $("#foot").textContent = `Bijgewerkt ${UPDATED}. Bron: Checkout in TeamTV; GG thuis uit de TeamTV-statistiekenexport.`;
   const f = $("#filters");
   const mk = (id, html, aria) => {
     const b = document.createElement("button");
@@ -536,16 +564,16 @@ function renderTiles() {
   [
     ["Goals per aanval", t.goals / t.att, o.goals / o.att, pct1(t.goals, t.att), pct1(o.goals, o.att), `${t.goals} uit ${t.att} aanvallen`, true],
     ["Rendement per schot", t.goals / t.shots, o.goals / o.shots, pct1(t.goals, t.shots), pct1(o.goals, o.shots), `${t.goals} uit ${t.shots} schoten`, true],
-    ["Balverlies", t.bv / t.att, o.bv / o.att, pct1(t.bv, t.att), pct1(o.bv, o.att), `${t.bv} van ${t.att} aanvallen`, false],
+    ["Balverlies", t.bv / t.bvAtt, o.bv / o.bvAtt, pct1(t.bv, t.bvAtt), pct1(o.bv, o.bvAtt), t.bvAtt ? `${t.bv} van ${t.bvAtt} aanvallen` : "niet geregistreerd", false],
     ["Aanvallende rebound", t.rw / t.rn, o.rw / o.rn, pct1(t.rw, t.rn), pct1(o.rw, o.rn), `${t.rw} van ${t.rn} gepakt`, true]
   ].forEach(([name, a, b, va, vb, det, hg]) => {
-    const [c, txt] = cmp(a, b, hg);
+    const [c, txt] = Number.isFinite(a) ? cmp(a, b, hg) : ["", "deze wedstrijd"];
     tiles.push({ t: name, v: va, s: `tgn ${vb}`, f: `${det} · ${txt}`, c });
   });
   const k = sumGkm(ms), kt = k[0] + k[1] + k[2], vk = VELD.gkm, vt = vk[0] + vk[1] + vk[2];
   const zr = (k[0] + k[1]) / kt, vr = (vk[0] + vk[1]) / vt;
   tiles.push({ t: "Raakt de korf", v: pct1(k[0] + k[1], kt), s: `veld ${pct1(vk[0] + vk[1], vt)}`,
-    f: `${k[0] + k[1]} van ${kt} veldschoten · ${zr >= vr ? "beter" : "slechter"} dan op het veld`, c: zr >= vr ? "good" : "bad" });
+    f: kt ? `${k[0] + k[1]} van ${kt} veldschoten · ${zr >= vr ? "beter" : "slechter"} dan op het veld` : "niet geregistreerd · deze wedstrijd", c: kt ? (zr >= vr ? "good" : "bad") : "" });
   $("#tiles").innerHTML = tiles.map((x) => `<div class="tile"><span class="t">${x.t}</span><div class="v"><b>${x.v}</b><small>${x.s}</small></div><span class="f ${x.c}">${x.f}</span></div>`).join("");
 }
 
@@ -555,7 +583,8 @@ function groupedChart(el, key, fmtDet, max) {
   h += `<div class="groups">`;
   MATCHES.forEach((m) => {
     const dim = !inSel(m);
-    const a = m.top[key] / m.top.att, b = m.tgn[key] / m.tgn.att;
+    const a = m.top[key] == null ? null : m.top[key] / m.top.att, b = m.tgn[key] == null ? null : m.tgn[key] / m.tgn.att;
+    if (a == null) { h += `<div class="grp ${dim ? "dim" : ""}"><span class="na-bar">niet geregistreerd</span></div>`; return; }
     h += `<div class="grp ${dim ? "dim" : ""}">
       <div class="bar top" tabindex="0" data-m="${m.id}" data-s="top" style="height:${(a * 100 / max) * 100}%"><span class="bl">${Math.round(a * 100)}%</span></div>
       <div class="bar opp" tabindex="0" data-m="${m.id}" data-s="tgn" style="height:${(b * 100 / max) * 100}%"><span class="bl">${Math.round(b * 100)}%</span></div>
@@ -564,6 +593,7 @@ function groupedChart(el, key, fmtDet, max) {
   h += `</div></div><div class="xl">${MATCHES.map((m) => `<div>${m.short}<small>${m.venue} · ${score(m)}</small></div>`).join("")}</div>`;
   el.innerHTML = h;
   el.querySelectorAll(".bar").forEach((b) => {
+    if (!b.dataset.m) return;
     const m = MATCHES.find((x) => x.id === b.dataset.m), side = b.dataset.s;
     bindTip(b, `<b>${side === "top" ? "TOP" : m.opp}</b><br>${label(m)}, ${score(m)}<br>${fmtDet(m[side])}`);
   });
@@ -577,7 +607,7 @@ function renderMatches() {
     <td>${pct(t.goals, t.att)}<span class="m">${pct(o.goals, o.att)}</span></td>
     <td>${t.shots}<span class="m">${o.shots}</span></td>
     <td>${pct(t.goals, t.shots)}<span class="m">${pct(o.goals, o.shots)}</span></td>
-    <td>${pct(t.bv, t.att)}<span class="m">${pct(o.bv, o.att)}</span></td>
+    <td>${bvPct(t)}<span class="m">${bvPct(o)}</span></td>
     <td>${pct(t.rw, t.rn)}<span class="m">${pct(o.rw, o.rn)}</span></td></tr>`;
   let h = `<caption>Eerste getal TOP, grijs getal tegenstander</caption><thead><tr><th>Wedstrijd</th><th>Uitslag</th><th>Aanvallen</th><th>Goals/aanval</th><th>Schoten</th><th>Rendement</th><th>Balverlies</th><th>Rebound</th></tr></thead><tbody>`;
   MATCHES.forEach((m) => {
@@ -597,11 +627,11 @@ function renderCompare() {
     ["Aanvallen per wedstrijd", "tempo", V.att / V.n, t.att / ms.length, (x) => Math.round(x), null],
     ["Goals per aanval", "", V.goals / V.att, t.goals / t.att, null, true],
     ["Rendement per schot", "", V.goals / V.shots, t.goals / t.shots, null, true],
-    ["Balverlies", "deel van de aanvallen", V.bv / V.att, t.bv / t.att, null, false],
+    ["Balverlies", "deel van de aanvallen", V.bv / V.att, t.bv / t.bvAtt, null, false],
     ["Aanvallende rebound", "", V.rw / V.rn, t.rw / t.rn, null, true],
     ["Raakt de korf", "goal of korf geraakt", (V.gkm[0] + V.gkm[1]) / vkt, (k[0] + k[1]) / kt, null, true],
     ["Mis", "korf niet geraakt", V.gkm[2] / vkt, k[2] / kt, null, false],
-    ["Aandeel van 9 meter", "van de veldschoten", V.d9[1] / vpos, T.a9 / pos, null, null],
+    ["Aandeel van 9 meter", "van de veldschoten met afstand", V.d9[1] / vpos, T.a9 / pos, null, null],
     ["Rendement 9 meter", "", V.d9[0] / V.d9[1], T.g9 / T.a9, null, true],
     ["Rendement 3 meter", "", V.d3[0] / V.d3[1], T.g3 / T.a3, null, true],
     ["Rendement tegenstander", "per schot", V.oGoals / V.oShots, o.goals / o.shots, null, false]
@@ -612,7 +642,7 @@ function renderCompare() {
   rows.forEach(([n, sub, v, z, f, hg]) => {
     const fmt = f || fp;
     let d = "";
-    if (hg !== null && Math.abs(z - v) >= 0.005) {
+    if (hg !== null && Number.isFinite(z) && Math.abs(z - v) >= 0.005) {
       const good = hg ? z > v : z < v;
       d = `<span class="delta ${good ? "pos" : "neg"}">${good ? "beter" : "slechter"}</span>`;
     }
@@ -632,6 +662,7 @@ function renderKorf() {
   };
   let h = "";
   MATCHES.forEach((m) => ["mats", "gido"].forEach((v) => {
+    if (!m.vak[v].gkm) return;
     h += row(VAK[v].name, `${label(m)}${m.type === "oefen" ? " (oefen)" : ""} · ${m.vak[v].gkm.reduce((a, b) => a + b)} schoten`, VAK[v].color, m.vak[v].gkm, !inSel(m));
   }));
   const k = sumGkm(chosen());
@@ -646,7 +677,11 @@ function renderVakken() {
   MATCHES.forEach((m) => m.players.forEach(([n, v]) => { if (n !== "Onbekend") (names[v] ||= new Set()).add(n); }));
   $("#vakcards").innerHTML = ["mats", "gido"].map((k) => {
     const s = { att: 0, goals: 0, shots: 0, bv: 0, rw: 0, rn: 0, oAtt: 0, oGoals: 0, oShots: 0, oBv: 0 };
-    ms.forEach((m) => { for (const f in s) s[f] += m.vak[k][f]; });
+    s.bvAtt = 0;
+    ms.forEach((m) => {
+      for (const f of ["att", "goals", "shots", "rw", "rn", "oAtt", "oGoals", "oShots"]) s[f] += m.vak[k][f];
+      if (m.vak[k].bv != null) { s.bv += m.vak[k].bv; s.bvAtt += m.vak[k].att; }
+    });
     const g = sumGkm(ms, k), gn = g[0] + g[1] + g[2];
     const saldo = s.goals - s.oGoals;
     const strip = MATCHES.map((m) => {
@@ -662,8 +697,8 @@ function renderVakken() {
       <div class="kv">
         <div><span>Goals per aanval</span><b>${pct(s.goals, s.att)}<small>${s.goals}/${s.att}</small></b></div>
         <div><span>Rendement per schot</span><b>${pct(s.goals, s.shots)}<small>${s.goals}/${s.shots}</small></b></div>
-        <div><span>Raakt de korf</span><b>${pct(g[0] + g[1], gn)}<small>${g[0] + g[1]}/${gn}</small></b></div>
-        <div><span>Balverlies</span><b>${pct(s.bv, s.att)}<small>${s.bv}/${s.att}</small></b></div>
+        <div><span>Raakt de korf</span><b>${pct(g[0] + g[1], gn)}<small>${gn ? `${g[0] + g[1]}/${gn}` : "niet geregistreerd"}</small></b></div>
+        <div><span>Balverlies</span><b>${pct(s.bv, s.bvAtt)}<small>${s.bvAtt ? `${s.bv}/${s.bvAtt}` : "niet geregistreerd"}</small></b></div>
         <div><span>Aanvallende rebound</span><b>${pct(s.rw, s.rn)}<small>${s.rw}/${s.rn}</small></b></div>
         <div><span>Tegenstander per aanval</span><b>${pct(s.oGoals, s.oAtt)}<small>${s.oGoals}/${s.oAtt}</small></b></div>
       </div>
@@ -675,7 +710,7 @@ function renderVakken() {
 function renderDistance() {
   const T = sumDist(chosen()), V = VELD;
   const pos = T.a3 + T.a6 + T.a9;
-  $("#distHint").textContent = `${pos} veldschoten met positie · ${T.asw + T.avw} strafworpen en vrije worpen · streepje = veld`;
+  $("#distHint").textContent = `${pos} veldschoten met afstand${T.ax ? ` (${T.ax} zonder afstand niet meegeteld)` : ""} · ${T.asw + T.avw} strafworpen en vrije worpen · streepje = veld`;
   const row = (n, sub, g, a, sp, ref) => `<div class="drow ${sp ? "sp" : ""}" tabindex="0" data-tip="${n}: ${g} uit ${a}${a ? ` (${pct(g, a)})` : ""}${ref ? ` · veld ${ref[0]} uit ${ref[1]} (${pct(ref[0], ref[1])})` : ""}">
       <div class="dn">${n}<small>${sub}</small></div>
       <div class="track"><div class="fill" style="width:${a ? (g / a) * 100 : 0}%"></div>${ref ? `<div class="vmark" style="left:calc(${(ref[0] / ref[1]) * 100}% - 1px)" aria-hidden="true"><span>veld</span></div>` : ""}</div>
