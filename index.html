@@ -251,16 +251,16 @@ footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
   </section>
 
   <section class="notes" id="kern">
-    <h3>Wat opvalt na vier zaalwedstrijden</h3>
+    <h3>Wat opvalt na vijf zaalwedstrijden</h3>
     <ul>
-      <li><b>De rebound beslist.</b> In de drie verloren wedstrijden pakte de tegenstander 60%, 66% en 76% van de eigen rebounds, en schoot daardoor 123, 117 en 123 keer, tegen 87, 76 en 89 keer bij TOP. Tegen LDODK, de gewonnen wedstrijd, was dat 46%.</li>
-      <li><b>Tegen GG lag het vooral aan de rebound.</b> GG pakte 67 van de 88 eigen rebounds. Het rendement per veldschot lag minder ver uit elkaar: 18% bij TOP (15 uit 82), 24% bij GG (27 uit 113). Beide vakken verloren hun helft met 4 doelpunten verschil.</li>
-      <li><b>In de zaal verliest TOP vaker de bal dan de tegenstander</b> (de eerste drie wedstrijden; tegen GG is balverlies niet geregistreerd). 23% van de aanvallen eindigt in balverlies, bij de tegenstanders 19%. Op het veld was dat andersom (22% tegen 25%). Tegen Unitas liep het op tot 30%.</li>
-      <li><b>Het tempo ligt hoger.</b> Gemiddeld 74 aanvallen per wedstrijd, tegen 59 op het veld.</li>
-      <li><b>Iets meer schoten raken de korf dan op het veld</b> (de eerste drie wedstrijden). 68% tegen 64%. Tegen Unitas zakte het naar 59%: 28 van de 68 veldschoten raakten de korf niet.</li>
-      <li><b>Tegen Unitas kwamen 6 van de 14 goals uit strafworpen</b> (6 uit 6). Uit het veld scoorde TOP 8 uit 68, ofwel 12%.</li>
+      <li><b>De rebound beslist.</b> In de drie verloren wedstrijden pakte de tegenstander 60%, 66% en 76% van de eigen rebounds, en schoot daardoor 123, 117 en 123 keer, tegen 87, 76 en 89 keer bij TOP. In de twee zeges was dat 46% (LDODK) en 59% (DOS '46), en lag het aantal schoten dicht bij elkaar.</li>
+      <li><b>Tegen DOS '46 de eerste competitiezege: 25–28 uit.</b> TOP scoorde in 35% van de aanvallen, het hoogste van de zaal, en verloor minder vaak de bal dan DOS (18% tegen 22%). Vak Mats speelde zonder Mats en scoorde 14 keer in 29 aanvallen.</li>
+      <li><b>Spelhervattingen tellen zwaar.</b> Tegen Unitas kwamen 6 van de 14 goals uit strafworpen, tegen DOS '46 8 van de 28 (4 strafworpen en 4 vrije worpen).</li>
+      <li><b>Balverlies ligt rond het niveau van de tegenstander.</b> In de vier wedstrijden waarin het geregistreerd is, eindigt 22% van de aanvallen van TOP in balverlies, bij de tegenstanders 20%. Op het veld was dat andersom (22% tegen 25%). Tegen Unitas liep het op tot 30%.</li>
+      <li><b>Het tempo ligt hoger.</b> Gemiddeld 75 aanvallen per wedstrijd, tegen 59 op het veld.</li>
+      <li><b>Iets meer schoten raken de korf dan op het veld.</b> 68% tegen 64%, in de vier wedstrijden waarin het geregistreerd is.</li>
     </ul>
-    <p class="caveat">De eerste twee zaalwedstrijden waren oefenwedstrijden; Unitas en GG waren competitie. Kies Competitie bovenaan om alleen de competitie te zien.</p>
+    <p class="caveat">De eerste twee zaalwedstrijden waren oefenwedstrijden; Unitas, GG en DOS '46 waren competitie. Kies Competitie bovenaan om alleen de competitie te zien.</p>
   </section>
 
   <section id="wedstrijden">
@@ -341,7 +341,8 @@ footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
   <section class="notes">
     <h3>Zo lees je dit</h3>
     <ul>
-      <li>LDODK en PKC waren oefenwedstrijden, Unitas en GG competitiewedstrijden. "Alle wedstrijden" telt beide mee; "Competitie" alleen de competitie.</li>
+      <li>LDODK en PKC waren oefenwedstrijden, Unitas, GG en DOS '46 competitiewedstrijden. "Alle wedstrijden" telt beide mee; "Competitie" alleen de competitie.</li>
+      <li>Mats speelde niet tegen DOS '46. Vak Mats bestond toen uit Boaz, Christian, Floor en Sofie.</li>
       <li>Alle cijfers komen uit Checkout en zijn per wedstrijd overgenomen. Checkout zelf toont geen totalen over meerdere wedstrijden; die zijn hier opgeteld.</li>
       <li>Met schotklok moet de aanval binnen 25 seconden de korf raken. "Korf geraakt" betekent: het schot raakte de korf maar ging er niet in. Samen met de goals is dat het deel dat de schotklok opnieuw laat lopen.</li>
       <li>Checkout registreert een verlopen schotklok niet apart. Die zit, net als slechte passes en overtredingen, in balverlies.</li>
@@ -360,7 +361,7 @@ footer { color: var(--muted); font-size: 12px; padding-block: 0 32px; }
 <script>
 // Spelers: [3m g,a, 6m g,a, 9m g,a, zonder positie g,a, strafworp g,a, vrije worp g,a, rebound g,a]
 // gkm per vak: [goal, korf geraakt, mis] over schoten met positie
-const UPDATED = "21 november 2026";
+const UPDATED = "24 november 2026";
 const MATCHES = [
   { id: "ldodk", type: "oefen", opp: "LDODK/Rinsma Modeplein", short: "LDODK", venue: "thuis", gf: 27, ga: 17,
     top: { att: 79, goals: 27, shots: 105, bv: 13, rw: 40, rn: 78 },
@@ -439,7 +440,24 @@ const MATCHES = [
       ["Gido",      "gido", [0,0, 0,0, 0,0, 1,17, 0,0, 0,0, 6,12]],
       ["Juul",      "gido", [0,0, 0,0, 0,0, 2,10, 1,1, 1,3, 4,9]],
       ["Ramon",     "gido", [0,0, 0,0, 0,0, 0,4,  0,0, 0,0, 1,3]],
-      ["Yana",      "gido", [0,0, 0,0, 0,0, 1,8,  0,0, 0,0, 3,5]] ] }
+      ["Yana",      "gido", [0,0, 0,0, 0,0, 1,8,  0,0, 0,0, 3,5]] ] },
+  // Mats speelde niet; Vak Mats bestond uit Boaz, Christian, Floor en Sofie
+  { id: "dos", type: "competitie", opp: "DOS '46/VDK Groep", short: "DOS '46", venue: "uit", gf: 28, ga: 25,
+    top: { att: 80, goals: 28, shots: 111, bv: 14, rw: 44, rn: 83 },
+    tgn: { att: 81, goals: 25, shots: 117, bv: 18, rw: 54, rn: 92 },
+    vak: {
+      mats: { att: 29, goals: 14, shots: 40, bv: 3, rw: 14, rn: 26, oAtt: 48, oGoals: 13, oShots: 73, oBv: 10, gkm: [9, 12, 14] },
+      gido: { att: 51, goals: 14, shots: 71, bv: 11, rw: 30, rn: 57, oAtt: 33, oGoals: 12, oShots: 44, oBv: 8, gkm: [11, 34, 18] } },
+    players: [
+      ["Boaz",      "mats", [0,1, 0,2, 4,7,  0,0, 1,1, 0,0, 4,6]],
+      ["Christian", "mats", [0,1, 0,2, 0,0,  0,0, 1,1, 0,0, 1,3]],
+      ["Floor",     "mats", [1,1, 3,7, 0,6,  0,0, 0,0, 2,2, 7,10]],
+      ["Sofie",     "mats", [1,2, 0,1, 0,5,  0,0, 1,1, 0,0, 2,7]],
+      ["Gerben",    "gido", [0,1, 0,0, 0,0,  0,0, 0,0, 0,0, 1,1]],
+      ["Gido",      "gido", [0,2, 3,10, 2,15, 0,0, 1,1, 0,0, 15,22]],
+      ["Juul",      "gido", [0,2, 0,3, 2,14, 0,0, 0,0, 2,7, 7,17]],
+      ["Ramon",     "gido", [1,2, 1,4, 1,5,  0,0, 0,0, 0,0, 4,8]],
+      ["Yana",      "gido", [1,1, 0,4, 0,0,  0,0, 0,0, 0,0, 1,4]] ] }
 ];
 // Veldseizoen najaar 2026, vijf wedstrijden (opgeteld uit Checkout)
 const VELD = {
